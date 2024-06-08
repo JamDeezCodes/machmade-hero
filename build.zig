@@ -36,6 +36,16 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    // Add Mach to our library and executable
+    const mach_dep = b.dependency("mach", .{
+        .target = target,
+        .optimize = optimize,
+    });
+    lib.root_module.addImport("mach", mach_dep.module("mach"));
+    exe.root_module.addImport("mach", mach_dep.module("mach"));
+
+    @import("mach").link(mach_dep.builder, exe);
+
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default
     // step when running `zig build`).
